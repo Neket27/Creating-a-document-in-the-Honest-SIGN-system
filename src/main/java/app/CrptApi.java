@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -84,22 +83,22 @@ public class CrptApi {
 
 
         //TODO Заглушка через рефлексию, в vm options разрешить пакет для рефлексии: --add-opens java.net.http/jdk.internal.net.http=ALL-UNNAMED
-        Field bodyField = response.getClass().getDeclaredField("body");
-        Field statusCodeField = response.getClass().getDeclaredField("responseCode");
-        bodyField.setAccessible(true);
-        statusCodeField.setAccessible(true);
-
-        String fakeJson = """
-                {
-                  "value": "123456789",
-                  "code": "200",
-                  "error_message": "",
-                  "description": "Документ успешно создан"
-                }
-                """;
-
-        bodyField.set(response, fakeJson);
-        statusCodeField.set(response, 200);
+//        Field bodyField = response.getClass().getDeclaredField("body");
+//        Field statusCodeField = response.getClass().getDeclaredField("responseCode");
+//        bodyField.setAccessible(true);
+//        statusCodeField.setAccessible(true);
+//
+//        String fakeJson = """
+//                {
+//                  "value": "123456789",
+//                  "code": "200",
+//                  "error_message": "",
+//                  "description": "Документ успешно создан"
+//                }
+//                """;
+//
+//        bodyField.set(response, fakeJson);
+//        statusCodeField.set(response, 200);
 
         if (response.statusCode() == 401) {
             throw new CrptApiException("Ошибка авторизации: неверный или просроченный токен", null);
@@ -291,25 +290,25 @@ public class CrptApi {
             this.type = type;
         }
 
-        public static class DocumentBuilder {
+        public static class Builder {
             private final Document doc = new Document();
 
-            public DocumentBuilder setDocumentFormat(DocumentFormat format) {
+            public Builder setDocumentFormat(DocumentFormat format) {
                 doc.setDocumentFormat(format);
                 return this;
             }
 
-            public DocumentBuilder setProductDocument(String content) {
+            public Builder setProductDocument(String content) {
                 doc.setProductDocument(content);
                 return this;
             }
 
-            public DocumentBuilder setDocumentGroup(DocumentGroup group) {
+            public Builder setDocumentGroup(DocumentGroup group) {
                 doc.setDocumentGroup(group);
                 return this;
             }
 
-            public DocumentBuilder setType(DocumentType type) {
+            public Builder setType(DocumentType type) {
                 doc.setType(type);
                 return this;
             }
