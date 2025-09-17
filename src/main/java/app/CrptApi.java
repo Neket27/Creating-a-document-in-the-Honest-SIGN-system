@@ -32,7 +32,7 @@ public class CrptApi {
         this.rateLimite = new RateLimiter(timeUnit, requestLimit);
     }
 
-    public CreateDocumentResponse createDocument(Document document, String signature) throws Exception {
+    public CreateDocumentResponse createDocument(Document document, String signature) {
         Objects.requireNonNull(document, "Document cannot be null");
         Objects.requireNonNull(signature, "Signature cannot be null");
 
@@ -56,15 +56,16 @@ public class CrptApi {
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new CrptApiException("Запрос прерван", e);
+            throw new CrptApiException("Request interrupted", e);
         } catch (IOException e) {
-            throw new CrptApiException("Ошибка сериализации/десериализации JSON", e);
+            throw new CrptApiException("JSON serialization/Deserialization error", e);
         } catch (Exception e) {
-            throw new CrptApiException("Неизвестная ошибка при создании документа", e);
+            throw new CrptApiException("An unknown error occurred while creating the document.", e);
         }
     }
 
-    private CreateDocumentResponse sendCreateRequest(CreateDocumentRequest request) throws Exception {
+
+    private CreateDocumentResponse sendCreateRequest(CreateDocumentRequest request) throws IOException, InterruptedException {
         Objects.requireNonNull(token, "Token cannot be null");
 
         String jsonBody = objectMapper.writeValueAsString(request);
@@ -101,7 +102,7 @@ public class CrptApi {
 //        statusCodeField.set(response, 200);
 
         if (response.statusCode() == 401) {
-            throw new CrptApiException("Ошибка авторизации: неверный или просроченный токен", null);
+            throw new CrptApiException("Error auth: wrong or expired token", null);
         } else if (response.statusCode() != 200) {
             throw new CrptApiException("HTTP " + response.statusCode() + ": " + response.body(), null);
         }
@@ -245,16 +246,16 @@ public class CrptApi {
 
         public void validate() {
             if (documentFormat == null) {
-                throw new IllegalArgumentException("documentFormat must not be null");
+                throw new IllegalArgumentException("DocumentFormat must not be null");
             }
             if (productDocument == null || productDocument.isBlank()) {
-                throw new IllegalArgumentException("productDocument must not be null or empty");
+                throw new IllegalArgumentException("ProductDocument must not be null or empty");
             }
             if (documentGroup == null) {
-                throw new IllegalArgumentException("documentGroup must not be null");
+                throw new IllegalArgumentException("DocumentGroup must not be null");
             }
             if (type == null) {
-                throw new IllegalArgumentException("type must not be null");
+                throw new IllegalArgumentException("Type must not be null");
             }
         }
 
